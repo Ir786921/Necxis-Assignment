@@ -1,11 +1,12 @@
-
 import { initializeApp } from "firebase/app";
 
-import { getAuth, GoogleAuthProvider,   signInWithPopup,
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
   signInWithRedirect,
-  getRedirectResult } from "firebase/auth";
-
-
+  getRedirectResult,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBO0CF-HiVHQb_CEg2NhFLXdYKIluH_Xck",
@@ -14,16 +15,19 @@ const firebaseConfig = {
   storageBucket: "assignment-necxis.firebasestorage.app",
   messagingSenderId: "164859707845",
   appId: "1:164859707845:web:ad7c010e33f8d2a0018bac",
-  measurementId: "G-B6M836GLKZ"
+  measurementId: "G-B6M836GLKZ",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
 
-
 const auth = getAuth(app);
 
-export { auth, provider,   signInWithPopup,
+export {
+  auth,
+  provider,
+  signInWithPopup,
   signInWithRedirect,
-  getRedirectResult };
+  getRedirectResult,
+};
