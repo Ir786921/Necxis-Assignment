@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Box, Typography, Button, Avatar } from "@mui/material";
 import { auth, provider, signInWithPopup } from "../Utils/FirebaseConfig";
 import { useRouter } from "next/navigation";
