@@ -17,30 +17,55 @@ export default function SignUpPage() {
         }
       } catch (error) {
         console.error("Error handling redirect result:", error);
+        // Don't silently fail - show some indication to the user
+        if (error.code === 'auth/missing-initial-state') {
+          // This specific error needs special handling
+          console.log("Missing initial state error - session storage issue");
+          // You could display a user-friendly message here
+        }
       }
     };
     
-    handleRedirectResult();
+    // Only run this if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      handleRedirectResult();
+    }
   }, [router]);
 
   const handleGoogleSignup = async () => {
     try {
-      // Check if user is on a mobile device
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        // Use redirect method for mobile devices
-        await signInWithRedirect(auth, provider);
-        // Page will redirect, code below won't execute immediately
-      } else {
-        // Use popup for desktop devices
+      // Always try popup first as it's more reliable
+      try {
         const result = await signInWithPopup(auth, provider);
         setUser(result.user);
         router.push("/home");
+      } catch (popupError) {
+        console.log("Popup method failed:", popupError);
+        
+        // Before trying redirect, ensure browser supports it
+        if (typeof window !== 'undefined' && 
+            window.sessionStorage && 
+            typeof window.sessionStorage.setItem === 'function') {
+          
+          // Set a marker in sessionStorage to detect if it's working
+          try {
+            sessionStorage.setItem('firebase_auth_test', '1');
+            sessionStorage.removeItem('firebase_auth_test');
+            
+            // SessionStorage works, try redirect
+            await signInWithRedirect(auth, provider);
+          } catch (storageError) {
+            // SessionStorage isn't working correctly
+            console.error("SessionStorage error:", storageError);
+            alert("Your browser settings may be preventing login. Please check your privacy settings or try a different browser.");
+          }
+        } else {
+          // SessionStorage isn't available
+          alert("Authentication requires browser storage access. Please check your privacy settings.");
+        }
       }
     } catch (error) {
-      console.error("Something Went Wrong While SignIn:", error);
-      // Optional: Add user-friendly error message display here
+      console.error("Authentication error:", error);
     }
   };
   return (
